@@ -1175,8 +1175,9 @@
     // Deshabilita controles por defecto
     qsa("input, textarea, select, button").forEach(el=>{
       const isTab = el.classList && el.classList.contains("tabbtn");
-      const isAdminCtrl = ["adminLogoutBtn","adminEnter","adminCancel","adminClose"].includes(el.id);
-      if(isTab || isAdminCtrl) return;
+      const isNavRadio = ["navMarco","navPrePost","navOperativa","navArchivos"].includes(el.id);
+      const isAdminCtrl = ["adminLogoutBtn","adminEnter","adminCancel","adminClose","adminPass"].includes(el.id);
+      if(isTab || isNavRadio || isAdminCtrl) return;
 
       // Botones de navegar calendario los dejamos habilitados (solo visual)
       const keepNav = ["pp_prevMonth","pp_nextMonth","pp_goToday","op_prevMonth","op_nextMonth","op_goToday"].includes(el.id);
