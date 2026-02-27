@@ -389,18 +389,36 @@
             <option value="Venganza">Venganza</option>
           </select>
 
-          <label>Imagen del trade</label>
-          <div class="dropzone" id="op_tradeDZ">
-            <strong>Pega (Ctrl+V), arrastra o selecciona un archivo</strong>
-            <div class="muted">La imagen se guarda dentro de la web.</div>
-            <div class="dzrow">
-              <input id="op_tradeFile" type="file" accept="image/*" />
-              <button class="btn" type="button" id="op_tradeClear">🗑️ Quitar</button>
+          
+          <label>Archivos multimedia</label>
+          <div class="grid2">
+            <div>
+              <div class="muted" style="margin-bottom:6px">1) Captura / evidencia</div>
+              <div class="dropzone" id="op_tradeDZ1">
+                <strong>Pega (Ctrl+V), arrastra o selecciona un archivo</strong>
+                <div class="muted">La imagen se guarda dentro de la web.</div>
+                <div class="dzrow">
+                  <input id="op_tradeFile1" type="file" accept="image/*" />
+                  <button class="btn" type="button" id="op_tradeClear1">🗑️ Quitar</button>
+                </div>
+                <div class="preview" id="op_tradePrev1"></div>
+              </div>
             </div>
-            <div class="preview" id="op_tradePrev"></div>
+            <div>
+              <div class="muted" style="margin-bottom:6px">2) Captura / evidencia</div>
+              <div class="dropzone" id="op_tradeDZ2">
+                <strong>Pega (Ctrl+V), arrastra o selecciona un archivo</strong>
+                <div class="muted">La imagen se guarda dentro de la web.</div>
+                <div class="dzrow">
+                  <input id="op_tradeFile2" type="file" accept="image/*" />
+                  <button class="btn" type="button" id="op_tradeClear2">🗑️ Quitar</button>
+                </div>
+                <div class="preview" id="op_tradePrev2"></div>
+              </div>
+            </div>
           </div>
 
-          <label for="op_comentarios">Comentarios (reflexión / mejorar)</label>
+<label for="op_comentarios">Comentarios (reflexión / mejorar)</label>
           <textarea id="op_comentarios" placeholder="Qué hiciste, qué reflejó de ti, qué mejorar, etc."></textarea>
 
           <div class="actions">
@@ -772,7 +790,7 @@
   const OP_KEY="deko_operativa_v2_img";
   const OP_SEL="deko_operativa_selected_v2_img";
   let opYear=new Date().getFullYear(), opMonth=new Date().getMonth();
-  let op_tradeImgData="";
+  let op_tradeImgData1="", op_tradeImgData2="";
 
   function opLoad(){ try{const r=localStorage.getItem(OP_KEY);return r?JSON.parse(r):[];}catch(e){return[];} }
   function opSave(list){ localStorage.setItem(OP_KEY, JSON.stringify(list)); }
@@ -800,9 +818,13 @@
     `;
   }
   function opImgs(entry){
-    const t=(entry.tradeImgData||"").trim();
-    if(!t) return `<div class="muted">Sin imagen.</div>`;
-    return `<div class="thumb"><img src="${t}" alt="Trade"/><div class="cap">📎 Imagen del trade</div></div>`;
+    const t1=(entry.tradeImgData1||entry.tradeImgData||"").trim();
+    const t2=(entry.tradeImgData2||"").trim();
+    if(!t1 && !t2) return `<div class="muted">Sin imagen.</div>`;
+    const items=[];
+    if(t1) items.push(`<div class="thumb"><img src="${t1}" alt="Trade 1"/><div class="cap">📎 Evidencia 1</div></div>`);
+    if(t2) items.push(`<div class="thumb"><img src="${t2}" alt="Trade 2"/><div class="cap">📎 Evidencia 2</div></div>`);
+    return items.join("");
   }
   function opRenderSelected(entry){
     const kv=document.getElementById("op_selectedKVs");
