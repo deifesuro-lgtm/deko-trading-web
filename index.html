@@ -812,9 +812,28 @@
     `;
   }
   function opImgs(entry){
-    const t=(entry.tradeImgData||"").trim();
-    if(!t) return `<div class="muted">Sin imagen.</div>`;
-    return `<div class="thumb"><img src="${t}" alt="Trade"/><div class="cap">📎 Imagen del trade</div></div>`;
+  let t = (entry.tradeImgData || "").trim();
+
+  // Si no hay imagen guardada, la construimos desde la fecha
+  if(!t && entry.date){
+    const parts = String(entry.date).split("-");
+    if(parts.length === 3){
+      const y = parts[0]; // año
+      const m = parts[1].padStart(2,"0"); // mes
+      const d = parts[2].padStart(2,"0"); // día
+
+      // Carpeta donde están tus imágenes
+      const folder = "agosto";
+
+      // Formato AÑO-DIA-MES
+     t = `assets/operativa/${folder}/${y}-${d}-${m}_DHTS.png`;
+    }
+  }
+
+if(!t) return `<div class="muted">Sin imagen.</div>`;
+return `<div class="thumb"><img src="${t}" alt="Trade"/><div class="cap">📷 Imagen del trade</div></div>`;
+}
+   
   }
   function opRenderSelected(entry){
     const kv=document.getElementById("op_selectedKVs");
