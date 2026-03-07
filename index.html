@@ -1,373 +1,301 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DEKO TRADING</title>
+  <title>DEKO TRADING — Journal</title>
   <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#121b33;
-      --panel-2:#182443;
-      --text:#eaf1ff;
-      --muted:#a9b7d6;
-      --line:rgba(255,255,255,.08);
-      --shadow:0 10px 30px rgba(0,0,0,.25);
-
-      --marco:#56d39b;
-      --prepost:#8bd3ff;
-      --operativa:#b39cff;
-      --archivos:#ffd166;
+    :root {
+      --bg:#0b1020; --panel:#121a30; --panel2:#17213d; --line:rgba(255,255,255,.08);
+      --text:#eef3ff; --muted:#9eb0d4; --green:#58d39b; --red:#ff6b6b; --yellow:#ffd166; --blue:#7bd3ff;
+      --shadow:0 12px 28px rgba(0,0,0,.24);
+      --radius:22px;
     }
-
     *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:radial-gradient(circle at top, #132449 0%, var(--bg) 55%);
-      color:var(--text);
-      min-height:100vh;
+    body {
+      margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
+      background:radial-gradient(circle at top,#132449 0%, var(--bg) 55%); min-height:100vh;
     }
-
-    .wrap{
-      width:min(1100px, 92%);
-      margin:40px auto;
+    .wrap{width:min(1200px,94%); margin:28px auto 50px;}
+    .topbar {
+      display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap;
+      background:rgba(255,255,255,.03); border:1px solid var(--line); border-radius:24px; padding:22px;
+      box-shadow:var(--shadow); backdrop-filter:blur(6px);
     }
-
-    .hero{
-      text-align:center;
-      padding:24px 20px 18px;
-      background:rgba(255,255,255,.03);
-      border:1px solid var(--line);
-      border-radius:24px;
-      box-shadow:var(--shadow);
-      backdrop-filter:blur(6px);
+    .title h1{margin:0 0 6px; font-size:32px}
+    .title p{margin:0; color:var(--muted)}
+    .stats {display:flex; gap:10px; flex-wrap:wrap}
+    .chip {
+      padding:10px 14px; border-radius:14px; background:rgba(255,255,255,.05); border:1px solid var(--line);
+      font-size:14px; color:var(--text); font-weight:700;
     }
-
-    .logo{
-      width:64px;
-      height:64px;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      margin:0 auto 14px;
-      background:linear-gradient(180deg,#1d2f58,#13213d);
-      border:1px solid var(--line);
-      font-size:28px;
+    .toolbar {
+      display:flex; gap:10px; flex-wrap:wrap; margin:18px 0;
     }
-
-    h1{
-      margin:0 0 8px;
-      font-size:36px;
-      letter-spacing:.5px;
+    .toolbar select, .toolbar button {
+      border:none; outline:none; background:var(--panel); color:var(--text);
+      border:1px solid var(--line); border-radius:14px; padding:12px 14px; font:inherit;
     }
-
-    .sub{
-      color:var(--muted);
-      margin-bottom:8px;
-      font-size:14px;
+    .layout {
+      display:grid; grid-template-columns:1.2fr .95fr; gap:18px;
     }
-
-    .hint{
-      color:#8df2a8;
-      font-size:14px;
-      margin-bottom:16px;
-      font-weight:600;
+    @media (max-width: 980px) {
+      .layout {grid-template-columns:1fr}
     }
-
-    .mode{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 14px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.04);
-      color:var(--text);
-      font-size:14px;
-      margin-bottom:18px;
-    }
-
-    .tabs{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:10px;
-    }
-
-    .tab-btn{
-      appearance:none;
-      border:none;
-      cursor:pointer;
-      padding:12px 18px;
-      border-radius:14px;
-      color:white;
-      font-weight:700;
-      font-size:14px;
-      background:#25345e;
-      border:1px solid rgba(255,255,255,.08);
-      transition:.18s ease;
-      box-shadow:var(--shadow);
-    }
-
-    .tab-btn:hover{transform:translateY(-1px)}
-    .tab-btn.active{outline:2px solid rgba(255,255,255,.15)}
-
-    .tab-btn[data-tab="marco"].active{background:var(--marco); color:#102219}
-    .tab-btn[data-tab="prepost"].active{background:var(--prepost); color:#10203a}
-    .tab-btn[data-tab="operativa"].active{background:var(--operativa); color:#1b1234}
-    .tab-btn[data-tab="archivos"].active{background:var(--archivos); color:#352400}
-
-    .sections{
-      margin-top:22px;
-    }
-
-    .section{
-      display:none;
+    .card {
       background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-      border:1px solid var(--line);
-      border-radius:24px;
-      padding:22px;
-      box-shadow:var(--shadow);
+      border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden;
     }
-
-    .section.active{
-      display:block;
-      animation:fade .2s ease;
+    .card-head {
+      padding:16px 18px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;
     }
-
-    @keyframes fade{
-      from{opacity:0; transform:translateY(6px)}
-      to{opacity:1; transform:translateY(0)}
+    .card-head h2 {margin:0; font-size:20px}
+    .calendar-wrap {padding:16px}
+    .dow, .grid {
+      display:grid; grid-template-columns:repeat(7,1fr); gap:10px;
     }
-
-    .section-title{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      margin:0 0 18px;
-      font-size:24px;
+    .dow div {
+      text-align:center; color:var(--muted); font-size:13px; padding-bottom:2px;
     }
-
-    .pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:10px 14px;
-      border-radius:12px;
-      font-size:14px;
-      font-weight:700;
-      margin:0 8px 10px 0;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(255,255,255,.05);
+    .day {
+      min-height:108px; border-radius:18px; background:var(--panel); border:1px solid var(--line);
+      padding:10px; cursor:pointer; transition:.15s ease; position:relative;
     }
-
-    .pill.marco{background:rgba(86,211,155,.16)}
-    .pill.prepost{background:rgba(139,211,255,.16)}
-    .pill.operativa{background:rgba(179,156,255,.16)}
-    .pill.archivos{background:rgba(255,209,102,.16)}
-
-    .card{
-      background:var(--panel);
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:18px;
-      margin-top:14px;
+    .day:hover{transform:translateY(-1px)}
+    .day.empty{opacity:.22; cursor:default}
+    .day.selected{outline:2px solid var(--blue)}
+    .day-num {font-weight:800; font-size:14px; margin-bottom:8px}
+    .badge {
+      display:inline-flex; padding:4px 8px; border-radius:999px; font-size:11px; font-weight:800; margin:2px 4px 0 0;
     }
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-      gap:14px;
+    .buy{background:rgba(88,211,155,.18); color:#7ef0b5}
+    .sell{background:rgba(255,107,107,.18); color:#ff9d9d}
+    .profit{background:rgba(88,211,155,.18); color:#7ef0b5}
+    .loss{background:rgba(255,107,107,.18); color:#ff9d9d}
+    .be{background:rgba(255,209,102,.18); color:#ffd166}
+    .mini {
+      display:block; color:var(--muted); font-size:11px; line-height:1.25; margin-top:5px;
     }
-
-    .box{
-      background:var(--panel-2);
-      border:1px solid var(--line);
-      border-radius:16px;
+    .detail {
       padding:16px;
     }
-
-    .box h3{
-      margin:0 0 10px;
-      font-size:16px;
+    .detail-empty {
+      color:var(--muted); border:1px dashed var(--line); border-radius:18px; padding:22px; text-align:center;
+      background:rgba(255,255,255,.02);
     }
-
-    .box p, .box li{
-      color:var(--muted);
-      line-height:1.45;
-      font-size:14px;
+    .trade-card {
+      background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:14px; margin-bottom:14px;
     }
-
-    ul{
-      margin:0;
-      padding-left:18px;
+    .trade-top {
+      display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:12px;
     }
-
-    .textarea{
-      width:100%;
-      min-height:160px;
-      resize:vertical;
-      border:none;
-      outline:none;
-      border-radius:14px;
-      padding:14px;
-      background:#0f1730;
-      color:var(--text);
-      border:1px solid var(--line);
-      font:inherit;
+    .trade-title {font-size:18px; font-weight:800}
+    .tags {display:flex; gap:8px; flex-wrap:wrap}
+    .grid-fields {
+      display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px;
+      margin-bottom:14px;
     }
-
-    .footer-note{
-      margin-top:14px;
-      color:var(--muted);
-      font-size:13px;
+    @media (max-width: 640px) {
+      .grid-fields {grid-template-columns:1fr}
     }
+    .field {
+      background:var(--panel2); border:1px solid var(--line); border-radius:14px; padding:12px;
+    }
+    .field .label {font-size:12px; color:var(--muted); margin-bottom:5px}
+    .field .value {font-size:14px; font-weight:700}
+    .img-wrap {
+      border-radius:18px; overflow:hidden; background:#0f1730; border:1px solid var(--line);
+    }
+    .img-wrap img {display:block; width:100%; height:auto}
+    .month-note {color:var(--muted); font-size:13px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <section class="hero">
-      <div class="logo">🚀</div>
-      <h1>DEKO TRADING</h1>
-      <div class="sub">Secciones independientes (Marco / Pre-Post / Operativa / Archivos)</div>
-      <div class="hint">✅ No se desplaza • ✅ Solo muestra 1 sección a la vez</div>
-      <div class="mode">👓 Modo lectura</div>
-
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="marco">🟢 Marco</button>
-        <button class="tab-btn" data-tab="prepost">💬 Pre/Post</button>
-        <button class="tab-btn" data-tab="operativa">🟣 Operativa</button>
-        <button class="tab-btn" data-tab="archivos">📁 Archivos</button>
+    <section class="topbar">
+      <div class="title">
+        <h1>DEKO TRADING — Journal</h1>
+        <p>Calendario de trades replicado desde tu Notion, con ficha por día e imagen del trade.</p>
+      </div>
+      <div class="stats">
+        <div class="chip" id="statTrades">Trades: 0</div>
+        <div class="chip" id="statMonths">Meses: 0</div>
+        <div class="chip">Máx. 2 trades por día</div>
       </div>
     </section>
 
-    <div class="sections">
+    <div class="toolbar">
+      <select id="monthSelect"></select>
+      <button id="todayBtn">Ir al primer trade del mes</button>
+    </div>
 
-      <section id="marco" class="section active">
-        <h2 class="section-title">🧠 Mesa / Marco de Trabajo</h2>
-
-        <div>
-          <span class="pill marco">80K tendencia principal</span>
-          <span class="pill marco">20K confirmación macro</span>
-          <span class="pill marco">Estructura S/R + impulsos</span>
-          <span class="pill marco">Patrones continuación / agotamiento</span>
-          <span class="pill marco">Confirmación micro contextos</span>
-          <span class="pill marco">Estado checklist + plan</span>
+    <div class="layout">
+      <section class="card">
+        <div class="card-head">
+          <h2 id="monthTitle">Calendario</h2>
+          <span class="month-note">Clic en un día para ver la ficha del trade</span>
         </div>
-
-        <div class="card">
-          <div class="grid">
-            <div class="box">
-              <h3>Base de análisis</h3>
-              <ul>
-                <li>Tendencia principal.</li>
-                <li>Zonas macro importantes.</li>
-                <li>Contexto general del día.</li>
-                <li>Escenario más probable.</li>
-              </ul>
-            </div>
-            <div class="box">
-              <h3>Regla clave</h3>
-              <p>Esta sección es tu base. No se mezcla con Pre/Post ni Operativa.</p>
-            </div>
+        <div class="calendar-wrap">
+          <div class="dow">
+            <div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div>
           </div>
+          <div class="grid" id="calendarGrid"></div>
         </div>
       </section>
 
-      <section id="prepost" class="section">
-        <h2 class="section-title">📝 Pre / Post Mercado</h2>
-
-        <div class="card">
-          <div class="grid">
-            <div class="box">
-              <h3>Pre mercado</h3>
-              <textarea class="textarea" placeholder="Aquí pegas tu texto de pre mercado...">Escenario principal:
-- Lateral
-- Alcista
-- Bajista
-
-Validar contexto macro
-Validar timing
-Validar zona</textarea>
-            </div>
-
-            <div class="box">
-              <h3>Post mercado</h3>
-              <textarea class="textarea" placeholder="Aquí pegas tu texto de post mercado...">¿Qué hice bien?
-¿Qué hice mal?
-¿Respeté el plan?
-¿El timing fue correcto?</textarea>
-            </div>
-          </div>
-
-          <div class="footer-note">Aquí puedes pegar lo que ya tenías cargado de pre y post.</div>
+      <aside class="card">
+        <div class="card-head">
+          <h2>Ficha del trade</h2>
         </div>
-      </section>
-
-      <section id="operativa" class="section">
-        <h2 class="section-title">🎯 Operativa</h2>
-
-        <div class="card">
-          <div class="grid">
-            <div class="box">
-              <h3>Checklist operativo</h3>
-              <ul>
-                <li>¿Contexto claro?</li>
-                <li>¿Timing temprano y no tarde?</li>
-                <li>¿Entrada propia y no influenciada?</li>
-                <li>¿1 trade máximo?</li>
-                <li>¿Riesgo respetado?</li>
-              </ul>
-            </div>
-
-            <div class="box">
-              <h3>Regla personal</h3>
-              <p><strong>Un trade al día.</strong> Si una condición falla, no se opera.</p>
-            </div>
-          </div>
+        <div class="detail" id="detailPane">
+          <div class="detail-empty">Selecciona un día del calendario para ver la operación.</div>
         </div>
-      </section>
-
-      <section id="archivos" class="section">
-        <h2 class="section-title">📂 Archivos</h2>
-
-        <div class="card">
-          <div class="grid">
-            <div class="box">
-              <h3>Journal</h3>
-              <p>Puedes poner aquí enlaces, notas o copiar tus resúmenes.</p>
-            </div>
-            <div class="box">
-              <h3>Backtesting</h3>
-              <p>Aquí puedes listar resultados, links o referencias a tus archivos.</p>
-            </div>
-            <div class="box">
-              <h3>Contratos / docs</h3>
-              <p>Espacio para tus documentos importantes.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      </aside>
     </div>
   </div>
 
   <script>
-    const buttons = document.querySelectorAll('.tab-btn');
-    const sections = document.querySelectorAll('.section');
+    const trades = [{"id": "2025-06-02-buy", "date_iso": "2025-06-02", "year": 2025, "month": 6, "day": 2, "date_label": "2 de junio de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "-4", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "ansiedad", "image": "assets/trades/2025-06-02.png"}, {"id": "2025-06-03-buy", "date_iso": "2025-06-03", "year": 2025, "month": 6, "day": 3, "date_label": "3 de junio de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "8", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "profesional", "image": "assets/trades/2025-06-03.png"}, {"id": "2025-06-04-buy", "date_iso": "2025-06-04", "year": 2025, "month": 6, "day": 4, "date_label": "4 de junio de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "-6", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-06-04.png"}, {"id": "2025-06-05-sell", "date_iso": "2025-06-05", "year": 2025, "month": 6, "day": 5, "date_label": "5 de junio de 2025", "resultado": "Profit", "direccion": "SELL", "entrada": "LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "3.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-06-05.png"}, {"id": "2025-06-06-nan", "date_iso": "2025-06-06", "year": 2025, "month": 6, "day": 6, "date_label": "6 de junio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "", "entrada": "CORTO, LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "-1.25", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "VENGANZA", "image": "assets/trades/2025-06-06.png"}, {"id": "2025-06-09-buy", "date_iso": "2025-06-09", "year": 2025, "month": 6, "day": 9, "date_label": "9 de junio de 2025", "resultado": "Breakeven", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "0", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-06-09.png"}, {"id": "2025-06-10-sell", "date_iso": "2025-06-10", "year": 2025, "month": 6, "day": 10, "date_label": "10 de junio de 2025", "resultado": "Profit", "direccion": "SELL", "entrada": "CORTO", "ratio": "4:1", "confirmacion": "", "puntos": "8", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-06-10.png"}, {"id": "2025-06-11-buy", "date_iso": "2025-06-11", "year": 2025, "month": 6, "day": 11, "date_label": "11 de junio de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "8", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "profesional", "image": "assets/trades/2025-06-11.png"}, {"id": "2025-06-12-buy", "date_iso": "2025-06-12", "year": 2025, "month": 6, "day": 12, "date_label": "12 de junio de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "9.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "profesional", "image": "assets/trades/2025-06-12.png"}, {"id": "2025-06-16-buy", "date_iso": "2025-06-16", "year": 2025, "month": 6, "day": 16, "date_label": "16 de junio de 2025", "resultado": "Stop Loss - Liquidez", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-8", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-06-16.png"}, {"id": "2025-06-17-sell", "date_iso": "2025-06-17", "year": 2025, "month": 6, "day": 17, "date_label": "17 de junio de 2025", "resultado": "Profit no valido", "direccion": "SELL", "entrada": "CORTO, LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "11", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "TODAS", "image": "assets/trades/2025-06-17.png"}, {"id": "2025-06-18-buy", "date_iso": "2025-06-18", "year": 2025, "month": 6, "day": 18, "date_label": "18 de junio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-8.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-06-18.png"}, {"id": "2025-06-20-sell", "date_iso": "2025-06-20", "year": 2025, "month": 6, "day": 20, "date_label": "20 de junio de 2025", "resultado": "Profit", "direccion": "SELL", "entrada": "CORTO", "ratio": "3:1", "confirmacion": "", "puntos": "3", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-06-20.png"}, {"id": "2025-06-23-sell", "date_iso": "2025-06-23", "year": 2025, "month": 6, "day": 23, "date_label": "23 de junio de 2025", "resultado": "Stop Loss", "direccion": "SELL", "entrada": "CORTO", "ratio": "2:1", "confirmacion": "", "puntos": "4.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-06-23.png"}, {"id": "2025-06-25-sell", "date_iso": "2025-06-25", "year": 2025, "month": 6, "day": 25, "date_label": "25 de junio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "SELL", "entrada": "", "ratio": "3:1", "confirmacion": "", "puntos": "-5.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "FOMO", "image": "assets/trades/2025-06-25.png"}, {"id": "2025-06-26-buy", "date_iso": "2025-06-26", "year": 2025, "month": 6, "day": 26, "date_label": "26 de junio de 2025", "resultado": "Breakeven", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "1.25", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "ansiedad", "image": "assets/trades/2025-06-26.png"}, {"id": "2025-06-27-buy", "date_iso": "2025-06-27", "year": 2025, "month": 6, "day": 27, "date_label": "27 de junio de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "4:1", "confirmacion": "", "puntos": "-19.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "TODAS", "image": "assets/trades/2025-06-27.png"}, {"id": "2025-06-30-buy", "date_iso": "2025-06-30", "year": 2025, "month": 6, "day": 30, "date_label": "30 de junio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-8", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "TODAS", "image": "assets/trades/2025-06-30.png"}, {"id": "2025-07-01-buy", "date_iso": "2025-07-01", "year": 2025, "month": 7, "day": 1, "date_label": "1 de julio de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "CORTO", "ratio": "2:1", "confirmacion": "", "puntos": "4.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "profesional", "image": "assets/trades/2025-07-01.png"}, {"id": "2025-07-07-buy", "date_iso": "2025-07-07", "year": 2025, "month": 7, "day": 7, "date_label": "7 de julio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "BUY", "entrada": "LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "-4", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "ansiedad", "image": "assets/trades/2025-07-07.png"}, {"id": "2025-07-08-buy", "date_iso": "2025-07-08", "year": 2025, "month": 7, "day": 8, "date_label": "8 de julio de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-1", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "neutro", "image": "assets/trades/2025-07-08.png"}, {"id": "2025-07-09-buy", "date_iso": "2025-07-09", "year": 2025, "month": 7, "day": 9, "date_label": "9 de julio de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-4", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-07-09.png"}, {"id": "2025-07-11-buy", "date_iso": "2025-07-11", "year": 2025, "month": 7, "day": 11, "date_label": "11 de julio de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "-4.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-07-11.png"}, {"id": "2025-07-14-sell", "date_iso": "2025-07-14", "year": 2025, "month": 7, "day": 14, "date_label": "14 de julio de 2025", "resultado": "Stop Loss", "direccion": "SELL", "entrada": "CORTO", "ratio": "3:1", "confirmacion": "", "puntos": "-1", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-07-14.png"}, {"id": "2025-07-15-buy", "date_iso": "2025-07-15", "year": 2025, "month": 7, "day": 15, "date_label": "15 de julio de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "CONTINUACION", "ratio": "3:1", "confirmacion": "", "puntos": "6.25", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "neutro", "image": "assets/trades/2025-07-15.png"}, {"id": "2025-07-16-buy", "date_iso": "2025-07-16", "year": 2025, "month": 7, "day": 16, "date_label": "16 de julio de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "8.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-07-16.png"}, {"id": "2025-07-17-buy", "date_iso": "2025-07-17", "year": 2025, "month": 7, "day": 17, "date_label": "17 de julio de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "6", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "profesional", "image": "assets/trades/2025-07-17.png"}, {"id": "2025-07-18-buy", "date_iso": "2025-07-18", "year": 2025, "month": 7, "day": 18, "date_label": "18 de julio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "BUY", "entrada": "LARGO", "ratio": "4:1", "confirmacion": "", "puntos": "-15", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "TODAS", "image": "assets/trades/2025-07-18.png"}, {"id": "2025-07-22-sell", "date_iso": "2025-07-22", "year": 2025, "month": 7, "day": 22, "date_label": "22 de julio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "SELL", "entrada": "CORTO", "ratio": "3:1", "confirmacion": "", "puntos": "-5", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "ansiedad", "image": "assets/trades/2025-07-22.png"}, {"id": "2025-07-24-buy", "date_iso": "2025-07-24", "year": 2025, "month": 7, "day": 24, "date_label": "24 de julio de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "7.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-07-24.png"}, {"id": "2025-07-25-sell", "date_iso": "2025-07-25", "year": 2025, "month": 7, "day": 25, "date_label": "25 de julio de 2025", "resultado": "Breakeven", "direccion": "SELL", "entrada": "CORTO", "ratio": "2:1", "confirmacion": "", "puntos": "0.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-07-25.png"}, {"id": "2025-07-28-sell", "date_iso": "2025-07-28", "year": 2025, "month": 7, "day": 28, "date_label": "28 de julio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "SELL", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-11.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "TODAS", "image": "assets/trades/2025-07-28.png"}, {"id": "2025-07-29-sell", "date_iso": "2025-07-29", "year": 2025, "month": 7, "day": 29, "date_label": "29 de julio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "SELL", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-6.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "VENGANZA", "image": "assets/trades/2025-07-29.png"}, {"id": "2025-07-30-sell", "date_iso": "2025-07-30", "year": 2025, "month": 7, "day": 30, "date_label": "30 de julio de 2025", "resultado": "Stop loss - Negligencia", "direccion": "SELL", "entrada": "CORTO, LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-23.5", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "TODAS", "image": "assets/trades/2025-07-30.png"}, {"id": "2025-07-31-sell", "date_iso": "2025-07-31", "year": 2025, "month": 7, "day": 31, "date_label": "31 de julio de 2025", "resultado": "Stop Loss", "direccion": "SELL", "entrada": "CORTO, LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-5.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "TODAS", "image": "assets/trades/2025-07-31.png"}, {"id": "2025-08-05-sell", "date_iso": "2025-08-05", "year": 2025, "month": 8, "day": 5, "date_label": "5 de agosto de 2025", "resultado": "Profit", "direccion": "SELL", "entrada": "CORTO", "ratio": "3:1", "confirmacion": "", "puntos": "5.25", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "neutro", "image": "assets/trades/2025-08-05.png"}, {"id": "2025-08-06-buy", "date_iso": "2025-08-06", "year": 2025, "month": 8, "day": 6, "date_label": "6 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "3.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-08-06.png"}, {"id": "2025-08-07-sell", "date_iso": "2025-08-07", "year": 2025, "month": 8, "day": 7, "date_label": "7 de agosto de 2025", "resultado": "Profit", "direccion": "SELL", "entrada": "CORTO", "ratio": "3:1", "confirmacion": "", "puntos": "8.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-08-07.png"}, {"id": "2025-08-08-buy", "date_iso": "2025-08-08", "year": 2025, "month": 8, "day": 8, "date_label": "8 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "8", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-08-08.png"}, {"id": "2025-08-11-sell", "date_iso": "2025-08-11", "year": 2025, "month": 8, "day": 11, "date_label": "11 de agosto de 2025", "resultado": "Stop loss - Negligencia", "direccion": "SELL", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-15.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "FOMO", "image": "assets/trades/2025-08-11.png"}, {"id": "2025-08-12-buy", "date_iso": "2025-08-12", "year": 2025, "month": 8, "day": 12, "date_label": "12 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "2.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-08-12.png"}, {"id": "2025-08-13-buy", "date_iso": "2025-08-13", "year": 2025, "month": 8, "day": 13, "date_label": "13 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "3.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-08-13.png"}, {"id": "2025-08-14-buy", "date_iso": "2025-08-14", "year": 2025, "month": 8, "day": 14, "date_label": "14 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "10", "hora": "", "sesion": "", "gestion": "MAL USADO", "feeling": "ansiedad", "image": "assets/trades/2025-08-14.png"}, {"id": "2025-08-15-sell", "date_iso": "2025-08-15", "year": 2025, "month": 8, "day": 15, "date_label": "15 de agosto de 2025", "resultado": "Stop Loss", "direccion": "SELL", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-4.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-08-15.png"}, {"id": "2025-08-18-sell", "date_iso": "2025-08-18", "year": 2025, "month": 8, "day": 18, "date_label": "18 de agosto de 2025", "resultado": "Stop loss - Negligencia", "direccion": "SELL", "entrada": "CORTO", "ratio": "3:1", "confirmacion": "", "puntos": "-15.75", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "TODAS", "image": "assets/trades/2025-08-18.png"}, {"id": "2025-08-20-sell", "date_iso": "2025-08-20", "year": 2025, "month": 8, "day": 20, "date_label": "20 de agosto de 2025", "resultado": "Profit", "direccion": "SELL", "entrada": "CORTO", "ratio": "3:1", "confirmacion": "", "puntos": "7", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-08-20.png"}, {"id": "2025-08-21-buy", "date_iso": "2025-08-21", "year": 2025, "month": 8, "day": 21, "date_label": "21 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "CORTO, LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "6.5", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "neutro", "image": "assets/trades/2025-08-21.png"}, {"id": "2025-08-22-buy", "date_iso": "2025-08-22", "year": 2025, "month": 8, "day": 22, "date_label": "22 de agosto de 2025", "resultado": "Stop loss - Negligencia", "direccion": "BUY", "entrada": "CORTO, LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-22", "hora": "", "sesion": "", "gestion": "MAL USADO", "feeling": "TODAS", "image": "assets/trades/2025-08-22.png"}, {"id": "2025-08-25-sell", "date_iso": "2025-08-25", "year": 2025, "month": 8, "day": 25, "date_label": "25 de agosto de 2025", "resultado": "Stop Loss", "direccion": "SELL", "entrada": "CORTO", "ratio": "2:1", "confirmacion": "", "puntos": "-4.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-08-25.png"}, {"id": "2025-08-26-buy", "date_iso": "2025-08-26", "year": 2025, "month": 8, "day": 26, "date_label": "26 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "9.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-08-26.png"}, {"id": "2025-08-27-buy", "date_iso": "2025-08-27", "year": 2025, "month": 8, "day": 27, "date_label": "27 de agosto de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-4", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-08-27.png"}, {"id": "2025-08-28-buy", "date_iso": "2025-08-28", "year": 2025, "month": 8, "day": 28, "date_label": "28 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "9.75", "hora": "", "sesion": "New York", "gestion": "NONE", "feeling": "neutro", "image": "assets/trades/2025-08-28.png"}, {"id": "2025-08-29-buy", "date_iso": "2025-08-29", "year": 2025, "month": 8, "day": 29, "date_label": "29 de agosto de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "10.25", "hora": "", "sesion": "New York", "gestion": "NONE", "feeling": "neutro", "image": "assets/trades/2025-08-29.png"}, {"id": "2025-09-02-buy", "date_iso": "2025-09-02", "year": 2025, "month": 9, "day": 2, "date_label": "2 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "CORTO, LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-9.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-09-02.png"}, {"id": "2025-09-03-buy", "date_iso": "2025-09-03", "year": 2025, "month": 9, "day": 3, "date_label": "3 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-2.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-09-03.png"}, {"id": "2025-09-08-buy", "date_iso": "2025-09-08", "year": 2025, "month": 9, "day": 8, "date_label": "8 de septiembre de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "7.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-09-08.png"}, {"id": "2025-09-09-buy", "date_iso": "2025-09-09", "year": 2025, "month": 9, "day": 9, "date_label": "9 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "CORTO, LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-6.25", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "ansiedad", "image": "assets/trades/2025-09-09.png"}, {"id": "2025-09-10-buy", "date_iso": "2025-09-10", "year": 2025, "month": 9, "day": 10, "date_label": "10 de septiembre de 2025", "resultado": "Stop loss - Negligencia", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-13.25", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "TODAS", "image": "assets/trades/2025-09-10.png"}, {"id": "2025-09-11-buy", "date_iso": "2025-09-11", "year": 2025, "month": 9, "day": 11, "date_label": "11 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-2.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-09-11.png"}, {"id": "2025-09-12-buy", "date_iso": "2025-09-12", "year": 2025, "month": 9, "day": 12, "date_label": "12 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-5.5", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "VENGANZA", "image": "assets/trades/2025-09-12.png"}, {"id": "2025-09-15-buy", "date_iso": "2025-09-15", "year": 2025, "month": 9, "day": 15, "date_label": "15 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-9.5", "hora": "", "sesion": "New York", "gestion": "NONE", "feeling": "ansiedad", "image": "assets/trades/2025-09-15.png"}, {"id": "2025-09-16-buy", "date_iso": "2025-09-16", "year": 2025, "month": 9, "day": 16, "date_label": "16 de septiembre de 2025", "resultado": "Breakeven", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "0.75", "hora": "", "sesion": "New York", "gestion": "NONE", "feeling": "VENGANZA", "image": "assets/trades/2025-09-16.png"}, {"id": "2025-09-18-buy", "date_iso": "2025-09-18", "year": 2025, "month": 9, "day": 18, "date_label": "18 de septiembre de 2025", "resultado": "Breakeven", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "0", "hora": "", "sesion": "", "gestion": "MAL USADO", "feeling": "neutro", "image": "assets/trades/2025-09-18.png"}, {"id": "2025-09-23-buy", "date_iso": "2025-09-23", "year": 2025, "month": 9, "day": 23, "date_label": "23 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "CORTO, LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "5.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-09-23.png"}, {"id": "2025-09-24-sell", "date_iso": "2025-09-24", "year": 2025, "month": 9, "day": 24, "date_label": "24 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "SELL", "entrada": "CORTO", "ratio": "3:1", "confirmacion": "", "puntos": "-7.5", "hora": "", "sesion": "New York", "gestion": "NONE", "feeling": "ansiedad", "image": "assets/trades/2025-09-24.png"}, {"id": "2025-09-25-buy", "date_iso": "2025-09-25", "year": 2025, "month": 9, "day": 25, "date_label": "25 de septiembre de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "CORTO, LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "3.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-09-25.png"}, {"id": "2025-09-26-sell", "date_iso": "2025-09-26", "year": 2025, "month": 9, "day": 26, "date_label": "26 de septiembre de 2025", "resultado": "Profit", "direccion": "SELL", "entrada": "CORTO", "ratio": "2:1", "confirmacion": "", "puntos": "-4.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-09-26.png"}, {"id": "2025-09-29-buy", "date_iso": "2025-09-29", "year": 2025, "month": 9, "day": 29, "date_label": "29 de septiembre de 2025", "resultado": "Stop Loss", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-4.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": "assets/trades/2025-09-29.png"}, {"id": "2025-10-01-buy", "date_iso": "2025-10-01", "year": 2025, "month": 10, "day": 1, "date_label": "1 de octubre de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "6.25", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": ""}, {"id": "2025-10-02-buy", "date_iso": "2025-10-02", "year": 2025, "month": 10, "day": 2, "date_label": "2 de octubre de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-1.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": ""}, {"id": "2025-10-03-buy", "date_iso": "2025-10-03", "year": 2025, "month": 10, "day": 3, "date_label": "3 de octubre de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "5.5", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "neutro", "image": ""}, {"id": "2025-10-06-buy", "date_iso": "2025-10-06", "year": 2025, "month": 10, "day": 6, "date_label": "6 de octubre de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "4.75", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "VENGANZA", "image": ""}, {"id": "2025-10-07-buy", "date_iso": "2025-10-07", "year": 2025, "month": 10, "day": 7, "date_label": "7 de octubre de 2025", "resultado": "Profit", "direccion": "BUY", "entrada": "CORTO, LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "1", "hora": "", "sesion": "New York", "gestion": "EJECUTADO", "feeling": "ansiedad", "image": "assets/trades/2025-10-07.png"}, {"id": "2025-10-09-buy", "date_iso": "2025-10-09", "year": 2025, "month": 10, "day": 9, "date_label": "9 de octubre de 2025", "resultado": "Stop loss - Negligencia", "direccion": "BUY", "entrada": "LARGO", "ratio": "3:1", "confirmacion": "", "puntos": "-4", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "ansiedad", "image": "assets/trades/2025-10-09.png"}, {"id": "2025-10-10-buy", "date_iso": "2025-10-10", "year": 2025, "month": 10, "day": 10, "date_label": "10 de octubre de 2025", "resultado": "Stop loss - Negligencia", "direccion": "BUY", "entrada": "CORTO, LARGO", "ratio": "2:1", "confirmacion": "", "puntos": "-11.25", "hora": "", "sesion": "New York", "gestion": "MAL USADO", "feeling": "VENGANZA", "image": "assets/trades/2025-10-10.png"}];
 
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        const target = button.dataset.tab;
+    const months = [...new Map(trades.map(t => [`${t.year}-${String(t.month).padStart(2,'0')}`, {year:t.year, month:t.month}])).values()]
+      .sort((a,b) => a.year - b.year || a.month - b.month);
 
-        buttons.forEach(btn => btn.classList.remove('active'));
-        sections.forEach(section => section.classList.remove('active'));
+    const monthNames = {"1": "Enero", "2": "Febrero", "3": "Marzo", "4": "Abril", "5": "Mayo", "6": "Junio", "7": "Julio", "8": "Agosto", "9": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre"};
+    const monthSelect = document.getElementById('monthSelect');
+    const monthTitle = document.getElementById('monthTitle');
+    const calendarGrid = document.getElementById('calendarGrid');
+    const detailPane = document.getElementById('detailPane');
 
-        button.classList.add('active');
-        document.getElementById(target).classList.add('active');
-      });
+    document.getElementById('statTrades').textContent = `Trades: ${trades.length}`;
+    document.getElementById('statMonths').textContent = `Meses: ${months.length}`;
+
+    months.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = `${m.year}-${String(m.month).padStart(2,'0')}`;
+      opt.textContent = `${monthNames[m.month]} ${m.year}`;
+      monthSelect.appendChild(opt);
     });
+
+    let selectedDate = null;
+
+    function tradesByDate(dateIso) {
+      return trades.filter(t => t.date_iso === dateIso);
+    }
+
+    function resultClass(text) {
+      const t = (text || '').toLowerCase();
+      if (t.includes('profit')) return 'profit';
+      if (t.includes('break') || t.includes('breakeven')) return 'be';
+      return 'loss';
+    }
+
+    function renderDetail(dateIso) {
+      const dayTrades = tradesByDate(dateIso);
+      if (!dayTrades.length) {
+        detailPane.innerHTML = '<div class="detail-empty">Este día no tiene trade registrado.</div>';
+        return;
+      }
+      selectedDate = dateIso;
+      detailPane.innerHTML = dayTrades.map((t, idx) => `
+        <div class="trade-card">
+          <div class="trade-top">
+            <div class="trade-title">${idx === 0 ? 'Trade principal' : `Trade ${idx+1}`}</div>
+            <div class="tags">
+              <span class="badge ${t.direccion && t.direccion.toLowerCase()==='buy' ? 'buy' : 'sell'}">${t.direccion || '—'}</span>
+              <span class="badge ${resultClass(t.resultado)}">${t.resultado || 'Sin resultado'}</span>
+            </div>
+          </div>
+
+          <div class="grid-fields">
+            <div class="field"><div class="label">Fecha</div><div class="value">${t.date_label}</div></div>
+            <div class="field"><div class="label">Entrada</div><div class="value">${t.entrada || '—'}</div></div>
+            <div class="field"><div class="label">Ratio</div><div class="value">${t.ratio || '—'}</div></div>
+            <div class="field"><div class="label">Confirmación</div><div class="value">${t.confirmacion || '—'}</div></div>
+            <div class="field"><div class="label">Puntos</div><div class="value">${t.puntos || '—'}</div></div>
+            <div class="field"><div class="label">Hora</div><div class="value">${t.hora || '—'}</div></div>
+            <div class="field"><div class="label">Sesión</div><div class="value">${t.sesion || '—'}</div></div>
+            <div class="field"><div class="label">Gestión / BE</div><div class="value">${t.gestion || '—'}</div></div>
+            <div class="field"><div class="label">Feeling</div><div class="value">${t.feeling || '—'}</div></div>
+          </div>
+
+          ${t.image ? `<div class="img-wrap"><img src="${t.image}" alt="Trade ${t.date_iso}"></div>` : '<div class="detail-empty">Este trade no tiene imagen enlazada todavía.</div>'}
+        </div>
+      `).join('');
+    }
+
+    function renderCalendar(monthValue) {
+      const [yearStr, monthStr] = monthValue.split('-');
+      const year = Number(yearStr), month = Number(monthStr);
+      monthTitle.textContent = `${monthNames[month]} ${year}`;
+
+      calendarGrid.innerHTML = '';
+      const first = new Date(year, month - 1, 1);
+      let startDay = first.getDay(); // 0 dom ... 6 sab
+      startDay = startDay === 0 ? 6 : startDay - 1; // lunes = 0
+
+      const daysInMonth = new Date(year, month, 0).getDate();
+
+      for (let i = 0; i < startDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'day empty';
+        calendarGrid.appendChild(empty);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateIso = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const dayTrades = tradesByDate(dateIso);
+        const div = document.createElement('div');
+        div.className = 'day' + (selectedDate === dateIso ? ' selected' : '');
+        if (!dayTrades.length) {
+          div.innerHTML = `<div class="day-num">${day}</div>`;
+        } else {
+          const labels = dayTrades.map(t => `<span class="badge ${t.direccion && t.direccion.toLowerCase()==='buy' ? 'buy' : 'sell'}">${t.direccion || '—'}</span>`).join('');
+          const results = dayTrades.map(t => `<span class="badge ${resultClass(t.resultado)}">${(t.resultado || '').replace('Breakeven','BE').replace('BreakEven','BE')}</span>`).join('');
+          div.innerHTML = `
+            <div class="day-num">${day}</div>
+            <div>${labels}</div>
+            <div>${results}</div>
+            <span class="mini">${dayTrades[0].puntos ? `Pts: ${dayTrades[0].puntos}` : ''}</span>
+          `;
+          div.addEventListener('click', () => {
+            document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
+            div.classList.add('selected');
+            renderDetail(dateIso);
+          });
+        }
+        calendarGrid.appendChild(div);
+      }
+
+      // Default to first trade of the month
+      const firstTrade = trades.find(t => t.year === year && t.month === month);
+      if (firstTrade) {
+        renderDetail(firstTrade.date_iso);
+        selectedDate = firstTrade.date_iso;
+        // re-highlight
+        requestAnimationFrame(() => {
+          const cards = [...document.querySelectorAll('.day')];
+          cards.forEach(d => {
+            if (d.textContent.includes(String(firstTrade.day))) d.classList.add('selected');
+          });
+        });
+      } else {
+        detailPane.innerHTML = '<div class="detail-empty">Este mes no tiene trades en la base cargada.</div>';
+      }
+    }
+
+    monthSelect.addEventListener('change', (e) => {
+      selectedDate = null;
+      renderCalendar(e.target.value);
+    });
+
+    document.getElementById('todayBtn').addEventListener('click', () => {
+      renderCalendar(monthSelect.value);
+    });
+
+    if (months.length) {
+      monthSelect.value = `${months[0].year}-${String(months[0].month).padStart(2,'0')}`;
+      renderCalendar(monthSelect.value);
+    }
   </script>
 </body>
 </html>
