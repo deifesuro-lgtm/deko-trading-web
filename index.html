@@ -85,7 +85,7 @@
   <section id="marco" class="section active">
     <div class="card">
       <h2>Marco de trabajo</h2>
-      <div class="notice">Versión estable para que tu operativa funcione y cargue las imágenes por fecha.</div>
+      <div class="notice">Versión estable usando una sola carpeta para imágenes: assets/operativa/</div>
     </div>
   </section>
 
@@ -211,11 +211,6 @@
   let clickTimer = null;
   let currentMonth = "";
 
-  const monthNames = {
-    "01":"enero","02":"febrero","03":"marzo","04":"abril","05":"mayo","06":"junio",
-    "07":"julio","08":"agosto","09":"septiembre","10":"octubre","11":"noviembre","12":"diciembre"
-  };
-
   const qs = (s) => document.querySelector(s);
   const qsa = (s) => Array.from(document.querySelectorAll(s));
 
@@ -245,7 +240,6 @@
     return `${d.getFullYear()}-${m}`;
   }
 
-  // Tabs
   qsa(".tabbtn").forEach(btn => {
     btn.addEventListener("click", () => {
       const tab = btn.dataset.tab;
@@ -256,7 +250,6 @@
     });
   });
 
-  // Admin
   qs("#dekoLogo").addEventListener("click", () => {
     logoClicks++;
     clearTimeout(clickTimer);
@@ -287,7 +280,6 @@
     });
   }
 
-  // Pre/Post
   function loadPrePost(){
     return safeParse(PP_KEY, {});
   }
@@ -328,7 +320,6 @@
     alert("Pre/Post guardado");
   });
 
-  // Operativa
   function loadJournal(){
     return safeParse(OP_KEY, {});
   }
@@ -339,9 +330,7 @@
     const y = parts[0];
     const mm = parts[1].padStart(2,"0");
     const dd = parts[2].padStart(2,"0");
-    const folder = monthNames[mm];
-    if(!folder) return "";
-    return `assets/operativa/${folder}/${y}-${dd}-${mm}_DHTS.png`;
+    return `assets/operativa/${y}-${dd}-${mm}_DHTS.png`;
   }
 
   function renderImage(date){
@@ -430,7 +419,7 @@
 
   function monthLabel(isoMonth){
     const [y, mm] = isoMonth.split("-");
-    return `${monthNames[mm]} ${y}`;
+    return `${mm}/${y}`;
   }
 
   function renderCalendar(){
@@ -512,7 +501,6 @@
     renderOperativaForm();
   });
 
-  // Init
   currentMonth = monthISO();
   qs("#pp_date").value = todayISO();
   qs("#op_date").value = todayISO();
