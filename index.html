@@ -10,11 +10,13 @@ body{
   background:#0f172a;
   color:white;
   font-family:Arial;
+  padding:20px;
 }
 .calendar{
   display:grid;
   grid-template-columns:repeat(7,1fr);
   gap:5px;
+  margin-top:10px;
 }
 .day{
   padding:10px;
@@ -30,7 +32,7 @@ body{
 }
 img{
   width:100%;
-  margin-top:10px;
+  margin-top:15px;
 }
 </style>
 
@@ -54,9 +56,10 @@ const img = document.getElementById("img")
 const monthInput = document.getElementById("month")
 const dateInput = document.getElementById("date")
 
+// 🔥 FORMATO ORIGINAL TUYO (AÑO-DÍA-MES)
 function getImg(date){
   const [y,m,d] = date.split("-")
-  return `assets/operativa/${y}-${m}-${d}_DHTS.png`
+  return `assets/operativa/${y}-${d}-${m}_DHTS.png`
 }
 
 function renderImg(date){
@@ -111,8 +114,10 @@ function renderCal(){
   }
 }
 
-monthInput.value = new Date().toISOString().slice(0,7)
-dateInput.value = new Date().toISOString().slice(0,10)
+// INIT
+const today = new Date()
+monthInput.value = today.toISOString().slice(0,7)
+dateInput.value = today.toISOString().slice(0,10)
 
 renderCal()
 renderImg(dateInput.value)
