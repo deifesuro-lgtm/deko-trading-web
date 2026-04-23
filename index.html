@@ -1,516 +1,124 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DEKO TRADING</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deko Trading</title>
+
 <style>
-  :root{
-    --bg:#0e1117; --panel:#111827; --card:#161b22; --line:#1f2937;
-    --text:#e6edf3; --muted:#9ca3af; --green:#22c55e; --blue:#38bdf8;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text)}
-  header{padding:28px 18px 18px;text-align:center;background:linear-gradient(180deg,var(--panel),rgba(17,24,39,.7));border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
-  h1{margin:0 0 8px;font-size:1.8rem}
-  .sub{color:var(--muted);margin:0}
-  .wrap{max-width:1180px;margin:0 auto;padding:18px}
-  .tabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
-  .tabbtn{
-    border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:var(--text);
-    padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:800
-  }
-  .tabbtn.active{background:rgba(34,197,94,.15);border-color:rgba(34,197,94,.4)}
-  .section{display:none}
-  .section.active{display:block}
-  .card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:16px}
-  .grid{display:grid;grid-template-columns:1fr;gap:14px}
-  @media(min-width:980px){.grid{grid-template-columns:1.15fr .85fr}}
-  h2{margin:0 0 12px;font-size:1.2rem}
-  .muted{color:var(--muted)}
-  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-weight:800;font-size:.88rem}
-  label{display:block;font-weight:800;margin:10px 0 6px}
-  input[type="text"],input[type="date"],input[type="month"],textarea,select{
-    width:100%;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.1);
-    background:rgba(255,255,255,.03);color:var(--text);outline:none
-  }
-  textarea{min-height:90px;resize:vertical}
-  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-  .btn{
-    border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:var(--text);
-    padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:900
-  }
-  .btn.primary{background:rgba(34,197,94,.16);border-color:rgba(34,197,94,.35)}
-  .btn.secondary{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.3)}
-  .hidden{display:none !important}
-  .calendarHead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-  .calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
-  .dow{color:var(--muted);font-size:.82rem;font-weight:900;text-align:center;padding:4px 0}
-  .day{
-    min-height:74px;padding:8px;border-radius:12px;border:1px solid rgba(255,255,255,.08);
-    background:rgba(255,255,255,.02);cursor:pointer
-  }
-  .day:hover{background:rgba(255,255,255,.05)}
-  .day.off{opacity:.3;cursor:default}
-  .day.sel{border-color:rgba(34,197,94,.55);background:rgba(34,197,94,.08)}
-  .dnum{font-weight:900}
-  .chip{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:999px;font-size:.72rem;font-weight:900;color:#08120a;background:var(--green)}
-  .chip.gray{background:#94a3b8;color:#0b1220}
-  .thumb{border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden;background:rgba(255,255,255,.02);margin-top:10px}
-  .thumb img{display:block;width:100%;max-height:460px;object-fit:contain;background:#0b1220}
-  .cap{padding:10px;color:var(--muted);font-size:.92rem;border-top:1px solid rgba(255,255,255,.06)}
-  .kvs{display:grid;gap:8px}
-  .kv{display:flex;gap:10px;align-items:flex-start}
-  .kv b{min-width:150px}
-  .notice{padding:10px 12px;border-left:3px solid rgba(56,189,248,.6);background:rgba(56,189,248,.08);border-radius:10px}
-  .row{display:grid;grid-template-columns:1fr;gap:10px}
-  @media(min-width:720px){.row{grid-template-columns:1fr 1fr}}
+body{
+  background:#0f172a;
+  color:white;
+  font-family:Arial;
+}
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+.day{
+  padding:10px;
+  border:1px solid #333;
+  cursor:pointer;
+  text-align:center;
+}
+.day:hover{
+  background:#1e293b;
+}
+.sel{
+  background:#22c55e;
+}
+img{
+  width:100%;
+  margin-top:10px;
+}
 </style>
+
 </head>
+
 <body>
 
-<header id="dekoLogo">
-  <h1>DEKO TRADING</h1>
-  <p class="sub" id="modeLabel">Modo lectura</p>
+<h2>Operativa</h2>
 
-  <div class="tabs">
-    <button class="tabbtn active" data-tab="marco" type="button">🧠 Marco</button>
-    <button class="tabbtn" data-tab="prepost" type="button">📊 Pre/Post</button>
-    <button class="tabbtn" data-tab="operativa" type="button">📓 Operativa</button>
-    <button class="tabbtn" data-tab="archivos" type="button">📁 Archivos</button>
-  </div>
-</header>
+<input type="month" id="month">
+<input type="date" id="date">
 
-<div class="wrap">
-  <section id="marco" class="section active">
-    <div class="card">
-      <h2>Marco de trabajo</h2>
-      <div class="notice">Versión estable usando una sola carpeta para imágenes: assets/operativa/</div>
-    </div>
-  </section>
+<div class="calendar" id="cal"></div>
 
-  <section id="prepost" class="section">
-    <div class="grid">
-      <div class="card">
-        <h2>Pre / Post Mercado</h2>
-        <div class="row">
-          <div>
-            <label for="pp_date">Fecha</label>
-            <input id="pp_date" type="date">
-          </div>
-          <div>
-            <label for="pp_instrument">Instrumento</label>
-            <input id="pp_instrument" type="text" value="S&P 500">
-          </div>
-        </div>
-
-        <label for="pp_pre">Pre-Mercado</label>
-        <textarea id="pp_pre" placeholder="Contexto, zonas importantes, qué esperabas"></textarea>
-
-        <label for="pp_post">Post-Mercado</label>
-        <textarea id="pp_post" placeholder="Qué hizo el mercado"></textarea>
-
-        <div class="actions" id="ppAdminActions">
-          <button class="btn primary" id="pp_saveBtn" type="button">Guardar</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Detalle del día</h2>
-        <div id="ppSelected" class="muted">Selecciona o guarda un día.</div>
-      </div>
-    </div>
-  </section>
-
-  <section id="operativa" class="section">
-    <div class="grid">
-      <div class="card">
-        <h2>Operativa</h2>
-
-        <div class="row">
-          <div>
-            <label for="op_month">Mes</label>
-            <input id="op_month" type="month">
-          </div>
-          <div>
-            <label for="op_date">Fecha seleccionada</label>
-            <input id="op_date" type="date" readonly>
-          </div>
-        </div>
-
-        <div class="calendarHead">
-          <span class="pill" id="opMonthLabel">Mes</span>
-          <div class="actions" style="margin:0">
-            <button class="btn" id="op_prevMonth" type="button">◀</button>
-            <button class="btn" id="op_nextMonth" type="button">▶</button>
-            <button class="btn secondary" id="op_today" type="button">Hoy</button>
-          </div>
-        </div>
-
-        <div class="calendar">
-          <div class="dow">L</div><div class="dow">M</div><div class="dow">X</div><div class="dow">J</div><div class="dow">V</div><div class="dow">S</div><div class="dow">D</div>
-        </div>
-        <div id="op_calendar" class="calendar" style="margin-top:8px"></div>
-
-        <div class="thumb">
-          <img id="opImage" alt="Trade image">
-          <div class="cap" id="opImageCap">Imagen automática por fecha</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>Registro del día</h2>
-        <div class="kvs" id="opReadView"></div>
-
-        <div id="opForm">
-          <label for="op_tipo">Tipo de entrada</label>
-          <input id="op_tipo" type="text" placeholder="Ej: continuación / reversa">
-
-          <label for="op_contexto">Contexto HTF</label>
-          <textarea id="op_contexto" placeholder="80k / 20k"></textarea>
-
-          <label for="op_zona">Zona 5k / 6k</label>
-          <textarea id="op_zona" placeholder="Zona, reacción, gatillo"></textarea>
-
-          <label for="op_gestion">Gestión</label>
-          <textarea id="op_gestion" placeholder="Parcial, BE, trailing, salida"></textarea>
-
-          <label for="op_resultado">Resultado</label>
-          <input id="op_resultado" type="text" placeholder="Profit / SL / BE">
-
-          <label for="op_emocion">Emoción</label>
-          <input id="op_emocion" type="text" placeholder="Calma, ansiedad, confianza...">
-
-          <label for="op_nota">Nota personal</label>
-          <textarea id="op_nota" placeholder="Reflexión del día"></textarea>
-
-          <div class="actions" id="opAdminActions">
-            <button class="btn primary" id="op_saveBtn" type="button">Guardar registro</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="archivos" class="section">
-    <div class="card">
-      <h2>Archivos</h2>
-      <div class="notice">Sección simple para no volver a romper la página.</div>
-    </div>
-  </section>
-</div>
+<img id="img">
 
 <script>
-(function(){
-  const ADMIN_PASSWORD = "Trading2026";
-  const PP_KEY = "deko_pp_v1";
-  const OP_KEY = "deko_journal_v1";
 
-  let adminMode = false;
-  let logoClicks = 0;
-  let clickTimer = null;
-  let currentMonth = "";
+const cal = document.getElementById("cal")
+const img = document.getElementById("img")
+const monthInput = document.getElementById("month")
+const dateInput = document.getElementById("date")
 
-  const qs = (s) => document.querySelector(s);
-  const qsa = (s) => Array.from(document.querySelectorAll(s));
+function getImg(date){
+  const [y,m,d] = date.split("-")
+  return `assets/operativa/${y}-${m}-${d}_DHTS.png`
+}
 
-  function safeParse(key, fallback){
-    try{
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : fallback;
-    }catch(e){
-      return fallback;
-    }
+function renderImg(date){
+  const path = getImg(date)
+  img.src = path
+
+  img.onerror = () => {
+    img.style.display = "none"
   }
 
-  function saveJson(key, obj){
-    localStorage.setItem(key, JSON.stringify(obj));
+  img.onload = () => {
+    img.style.display = "block"
+  }
+}
+
+function renderCal(){
+
+  const [y,m] = monthInput.value.split("-").map(Number)
+
+  const days = new Date(y,m,0).getDate()
+  const first = new Date(y,m-1,1)
+
+  let start = first.getDay()
+  start = (start + 6) % 7
+
+  cal.innerHTML = ""
+
+  for(let i=0;i<start;i++){
+    const empty = document.createElement("div")
+    cal.appendChild(empty)
   }
 
-  function todayISO(){
-    const d = new Date();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const day = String(d.getDate()).padStart(2,"0");
-    return `${d.getFullYear()}-${m}-${day}`;
-  }
+  for(let d=1; d<=days; d++){
 
-  function monthISO(){
-    const d = new Date();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    return `${d.getFullYear()}-${m}`;
-  }
+    const dd = String(d).padStart(2,"0")
+    const mm = String(m).padStart(2,"0")
+    const date = `${y}-${mm}-${dd}`
 
-  qsa(".tabbtn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const tab = btn.dataset.tab;
-      qsa(".tabbtn").forEach(b => b.classList.remove("active"));
-      qsa(".section").forEach(s => s.classList.remove("active"));
-      btn.classList.add("active");
-      qs(`#${tab}`).classList.add("active");
-    });
-  });
+    const el = document.createElement("div")
+    el.className = "day"
+    el.innerText = d
 
-  qs("#dekoLogo").addEventListener("click", () => {
-    logoClicks++;
-    clearTimeout(clickTimer);
-    clickTimer = setTimeout(() => { logoClicks = 0; }, 1000);
+    el.onclick = () => {
+      dateInput.value = date
+      renderImg(date)
 
-    if(logoClicks >= 5){
-      logoClicks = 0;
-      const pass = prompt("Contraseña");
-      if(pass === ADMIN_PASSWORD){
-        adminMode = true;
-        qs("#modeLabel").textContent = "Modo administrador";
-        renderAdminVisibility();
-        renderOperativaForm();
-      } else {
-        alert("Contraseña incorrecta");
-      }
-    }
-  });
-
-  function renderAdminVisibility(){
-    const show = adminMode;
-    qs("#ppAdminActions").classList.toggle("hidden", !show);
-    qs("#opAdminActions").classList.toggle("hidden", !show);
-
-    qsa("#opForm input, #opForm textarea").forEach(el => el.disabled = !show);
-    qsa("#prepost input, #prepost textarea").forEach(el => {
-      if(el.id !== "pp_date") el.disabled = !show;
-    });
-  }
-
-  function loadPrePost(){
-    return safeParse(PP_KEY, {});
-  }
-
-  function renderPrePostDetail(date){
-    const data = loadPrePost();
-    const entry = data[date];
-    if(!entry){
-      qs("#ppSelected").innerHTML = `<div class="muted">Sin registro para ${date}</div>`;
-      return;
-    }
-    qs("#ppSelected").innerHTML = `
-      <div class="kvs">
-        <div class="kv"><b>Fecha</b><span>${date}</span></div>
-        <div class="kv"><b>Instrumento</b><span>${entry.instrument || ""}</span></div>
-        <div class="kv"><b>Pre</b><span>${(entry.pre || "").replace(/\n/g,"<br>")}</span></div>
-        <div class="kv"><b>Post</b><span>${(entry.post || "").replace(/\n/g,"<br>")}</span></div>
-      </div>
-    `;
-  }
-
-  qs("#pp_date").value = todayISO();
-  qs("#pp_date").addEventListener("change", () => {
-    renderPrePostDetail(qs("#pp_date").value);
-  });
-
-  qs("#pp_saveBtn").addEventListener("click", () => {
-    if(!adminMode) return;
-    const date = qs("#pp_date").value || todayISO();
-    const data = loadPrePost();
-    data[date] = {
-      instrument: qs("#pp_instrument").value || "",
-      pre: qs("#pp_pre").value || "",
-      post: qs("#pp_post").value || ""
-    };
-    saveJson(PP_KEY, data);
-    renderPrePostDetail(date);
-    alert("Pre/Post guardado");
-  });
-
-  function loadJournal(){
-    return safeParse(OP_KEY, {});
-  }
-
-  function getImagePathByDate(isoDate){
-    const parts = String(isoDate).split("-");
-    if(parts.length !== 3) return "";
-    const y = parts[0];
-    const mm = parts[1].padStart(2,"0");
-    const dd = parts[2].padStart(2,"0");
-    return `assets/operativa/${y}-${dd}-${mm}_DHTS.png`;
-  }
-
-  function renderImage(date){
-    const img = qs("#opImage");
-    const cap = qs("#opImageCap");
-    const path = getImagePathByDate(date);
-
-    if(!path){
-      img.removeAttribute("src");
-      img.style.display = "none";
-      cap.textContent = "Sin imagen";
-      return;
+      document.querySelectorAll(".day").forEach(x=>x.classList.remove("sel"))
+      el.classList.add("sel")
     }
 
-    img.style.display = "block";
-    img.src = path;
-
-    img.onerror = function(){
-      img.removeAttribute("src");
-      img.style.display = "none";
-      cap.textContent = "No se encontró imagen para esta fecha";
-    };
-
-    img.onload = function(){
-      img.style.display = "block";
-      cap.textContent = path;
-    };
+    cal.appendChild(el)
   }
+}
 
-  function renderOperativaForm(){
-    const date = qs("#op_date").value;
-    const journal = loadJournal();
-    const entry = journal[date] || {
-      tipo:"", contexto:"", zona:"", gestion:"", resultado:"", emocion:"", nota:""
-    };
+monthInput.value = new Date().toISOString().slice(0,7)
+dateInput.value = new Date().toISOString().slice(0,10)
 
-    qs("#op_tipo").value = entry.tipo || "";
-    qs("#op_contexto").value = entry.contexto || "";
-    qs("#op_zona").value = entry.zona || "";
-    qs("#op_gestion").value = entry.gestion || "";
-    qs("#op_resultado").value = entry.resultado || "";
-    qs("#op_emocion").value = entry.emocion || "";
-    qs("#op_nota").value = entry.nota || "";
+renderCal()
+renderImg(dateInput.value)
 
-    qs("#opReadView").innerHTML = `
-      <div class="kv"><b>Fecha</b><span>${date || "—"}</span></div>
-      <div class="kv"><b>Tipo</b><span>${entry.tipo || "—"}</span></div>
-      <div class="kv"><b>Resultado</b><span>${entry.resultado || "—"}</span></div>
-      <div class="kv"><b>Emoción</b><span>${entry.emocion || "—"}</span></div>
-    `;
-  }
+monthInput.onchange = renderCal
 
-  qs("#op_saveBtn").addEventListener("click", () => {
-    if(!adminMode) return;
-    const date = qs("#op_date").value;
-    if(!date){
-      alert("Selecciona una fecha");
-      return;
-    }
-
-    const journal = loadJournal();
-    journal[date] = {
-      tipo: qs("#op_tipo").value || "",
-      contexto: qs("#op_contexto").value || "",
-      zona: qs("#op_zona").value || "",
-      gestion: qs("#op_gestion").value || "",
-      resultado: qs("#op_resultado").value || "",
-      emocion: qs("#op_emocion").value || "",
-      nota: qs("#op_nota").value || ""
-    };
-    saveJson(OP_KEY, journal);
-    renderOperativaForm();
-    renderCalendar();
-    alert("Registro guardado");
-  });
-
-  function daysInMonth(year, month){
-    return new Date(year, month, 0).getDate();
-  }
-
-  function mondayFirstDow(year, month){
-    const d = new Date(year, month - 1, 1);
-    const js = d.getDay();
-    return (js + 6) % 7;
-  }
-
-  function monthLabel(isoMonth){
-    const [y, mm] = isoMonth.split("-");
-    return `${mm}/${y}`;
-  }
-
-  function renderCalendar(){
-    qs("#op_month").value = currentMonth;
-    qs("#opMonthLabel").textContent = monthLabel(currentMonth);
-
-    const [year, month] = currentMonth.split("-").map(Number);
-    const totalDays = daysInMonth(year, month);
-    const start = mondayFirstDow(year, month);
-    const grid = qs("#op_calendar");
-    const journal = loadJournal();
-    const selectedDate = qs("#op_date").value;
-
-    const cells = [];
-
-    for(let i=0; i<start; i++){
-      cells.push(`<div class="day off"></div>`);
-    }
-
-    for(let d=1; d<=totalDays; d++){
-      const dd = String(d).padStart(2,"0");
-      const mm = String(month).padStart(2,"0");
-      const iso = `${year}-${mm}-${dd}`;
-      const entry = journal[iso];
-      const sel = iso === selectedDate ? " sel" : "";
-      const chip = entry ? `<span class="chip${entry.resultado ? '' : ' gray'}">${entry.resultado || "Guardado"}</span>` : "";
-      cells.push(`<div class="day${sel}" data-date="${iso}"><div class="dnum">${d}</div>${chip}</div>`);
-    }
-
-    while(cells.length % 7 !== 0){
-      cells.push(`<div class="day off"></div>`);
-    }
-
-    grid.innerHTML = cells.join("");
-
-    qsa("#op_calendar .day[data-date]").forEach(day => {
-      day.addEventListener("click", () => {
-        const date = day.getAttribute("data-date");
-        qs("#op_date").value = date;
-        renderImage(date);
-        renderOperativaForm();
-        renderCalendar();
-      });
-    });
-  }
-
-  qs("#op_month").addEventListener("change", () => {
-    currentMonth = qs("#op_month").value || monthISO();
-    renderCalendar();
-  });
-
-  qs("#op_prevMonth").addEventListener("click", () => {
-    let [y, m] = currentMonth.split("-").map(Number);
-    m -= 1;
-    if(m < 1){
-      m = 12;
-      y -= 1;
-    }
-    currentMonth = `${y}-${String(m).padStart(2,"0")}`;
-    renderCalendar();
-  });
-
-  qs("#op_nextMonth").addEventListener("click", () => {
-    let [y, m] = currentMonth.split("-").map(Number);
-    m += 1;
-    if(m > 12){
-      m = 1;
-      y += 1;
-    }
-    currentMonth = `${y}-${String(m).padStart(2,"0")}`;
-    renderCalendar();
-  });
-
-  qs("#op_today").addEventListener("click", () => {
-    currentMonth = monthISO();
-    qs("#op_date").value = todayISO();
-    renderCalendar();
-    renderImage(qs("#op_date").value);
-    renderOperativaForm();
-  });
-
-  currentMonth = monthISO();
-  qs("#pp_date").value = todayISO();
-  qs("#op_date").value = todayISO();
-
-  renderAdminVisibility();
-  renderPrePostDetail(qs("#pp_date").value);
-  renderCalendar();
-  renderImage(qs("#op_date").value);
-  renderOperativaForm();
-})();
 </script>
 
 </body>
