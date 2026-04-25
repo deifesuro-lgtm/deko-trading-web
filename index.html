@@ -6,23 +6,100 @@
 <title>Deko Trading</title>
 
 <style>
-body{background:#0f172a;color:white;font-family:Arial;padding:20px}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
-.day{padding:10px;border:1px solid #333;cursor:pointer;text-align:center}
-.day:hover{background:#1e293b}
-.sel{background:#22c55e}
-img{width:100%;margin-top:15px}
+body{
+  margin:0;
+  background:#0f172a;
+  color:white;
+  font-family:Arial;
+}
 
-.form{margin-top:20px;display:grid;gap:10px}
-select,input{padding:8px;border-radius:5px;border:none}
-button{padding:10px;background:#22c55e;border:none;color:black;font-weight:bold;cursor:pointer}
+/* HEADER */
+header{
+  text-align:center;
+  padding:20px;
+  font-size:24px;
+  font-weight:bold;
+  background:#020617;
+  border-bottom:1px solid #1e293b;
+}
+
+/* LAYOUT */
+.container{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:20px;
+  padding:20px;
+}
+
+/* CALENDAR */
+.calendar{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+  margin-top:10px;
+}
+.day{
+  padding:10px;
+  border:1px solid #334155;
+  cursor:pointer;
+  text-align:center;
+  border-radius:6px;
+}
+.day:hover{
+  background:#1e293b;
+}
+.sel{
+  background:#22c55e;
+  color:black;
+}
+
+/* IMAGE */
+img{
+  width:100%;
+  margin-top:15px;
+  border-radius:10px;
+}
+
+/* FORM */
+.form{
+  background:#020617;
+  padding:15px;
+  border-radius:10px;
+  display:grid;
+  gap:10px;
+  border:1px solid #1e293b;
+}
+
+.form h3{
+  margin:0 0 10px 0;
+}
+
+select,input{
+  padding:8px;
+  border-radius:5px;
+  border:none;
+}
+
+button{
+  padding:10px;
+  background:#22c55e;
+  border:none;
+  font-weight:bold;
+  cursor:pointer;
+  border-radius:5px;
+}
 </style>
 
 </head>
 
 <body>
 
-<h2>Operativa</h2>
+<header>DEKO TRADING</header>
+
+<div class="container">
+
+<!-- IZQUIERDA -->
+<div>
 
 <input type="month" id="month">
 <input type="date" id="date">
@@ -31,7 +108,12 @@ button{padding:10px;background:#22c55e;border:none;color:black;font-weight:bold;
 
 <img id="img">
 
+</div>
+
+<!-- DERECHA -->
 <div class="form">
+
+<h3>Operativa</h3>
 
 <select id="resultado">
 <option value="">Resultado</option>
@@ -51,7 +133,7 @@ button{padding:10px;background:#22c55e;border:none;color:black;font-weight:bold;
 <option>Corto</option>
 </select>
 
-<input id="ratio" value="2:1" readonly>
+<input value="2:1" readonly>
 
 <input id="puntos" placeholder="Puntos">
 
@@ -76,7 +158,6 @@ button{padding:10px;background:#22c55e;border:none;color:black;font-weight:bold;
 <option>Profesional</option>
 </select>
 
-<!-- 🔥 NUEVO: MANTO -->
 <select id="manto">
 <option value="">Manto</option>
 <option>Si</option>
@@ -84,6 +165,8 @@ button{padding:10px;background:#22c55e;border:none;color:black;font-weight:bold;
 </select>
 
 <button onclick="guardar()">Guardar</button>
+
+</div>
 
 </div>
 
@@ -145,7 +228,6 @@ function guardar(){
     resultado: resultado.value,
     direccion: direccion.value,
     entrada: entrada.value,
-    ratio: ratio.value,
     puntos: puntos.value,
     sesion: sesion.value,
     gestion: gestion.value,
