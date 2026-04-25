@@ -6,34 +6,16 @@
 <title>Deko Trading</title>
 
 <style>
-body{
-  background:#0f172a;
-  color:white;
-  font-family:Arial;
-  padding:20px;
-}
-.calendar{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  gap:5px;
-  margin-top:10px;
-}
-.day{
-  padding:10px;
-  border:1px solid #333;
-  cursor:pointer;
-  text-align:center;
-}
-.day:hover{
-  background:#1e293b;
-}
-.sel{
-  background:#22c55e;
-}
-img{
-  width:100%;
-  margin-top:15px;
-}
+body{background:#0f172a;color:white;font-family:Arial;padding:20px}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px}
+.day{padding:10px;border:1px solid #333;cursor:pointer;text-align:center}
+.day:hover{background:#1e293b}
+.sel{background:#22c55e}
+img{width:100%;margin-top:15px}
+
+.form{margin-top:20px;display:grid;gap:10px}
+select,input{padding:8px;border-radius:5px;border:none}
+button{padding:10px;background:#22c55e;border:none;color:black;font-weight:bold;cursor:pointer}
 </style>
 
 </head>
@@ -49,6 +31,62 @@ img{
 
 <img id="img">
 
+<div class="form">
+
+<select id="resultado">
+<option value="">Resultado</option>
+<option>Stop Loss</option>
+<option>Target</option>
+</select>
+
+<select id="direccion">
+<option value="">Dirección</option>
+<option>Compra</option>
+<option>Venta</option>
+</select>
+
+<select id="entrada">
+<option value="">Entrada</option>
+<option>Largo</option>
+<option>Corto</option>
+</select>
+
+<input id="ratio" value="2:1" readonly>
+
+<input id="puntos" placeholder="Puntos">
+
+<select id="sesion">
+<option>New York</option>
+<option>London</option>
+</select>
+
+<select id="gestion">
+<option value="">Gestión</option>
+<option>Mal usado</option>
+<option>Ejecutado</option>
+</select>
+
+<select id="feeling">
+<option value="">Feeling</option>
+<option>Venganza</option>
+<option>FOMO</option>
+<option>Ansiedad</option>
+<option>Neutro</option>
+<option>Certeza</option>
+<option>Profesional</option>
+</select>
+
+<!-- 🔥 NUEVO: MANTO -->
+<select id="manto">
+<option value="">Manto</option>
+<option>Si</option>
+<option>No</option>
+</select>
+
+<button onclick="guardar()">Guardar</button>
+
+</div>
+
 <script>
 
 const cal = document.getElementById("cal")
@@ -56,7 +94,6 @@ const img = document.getElementById("img")
 const monthInput = document.getElementById("month")
 const dateInput = document.getElementById("date")
 
-// 🔥 FORMATO ORIGINAL TUYO (AÑO-DÍA-MES)
 function getImg(date){
   const [y,m,d] = date.split("-")
   return `assets/operativa/${y}-${d}-${m}_DHTS.png`
@@ -65,46 +102,35 @@ function getImg(date){
 function renderImg(date){
   const path = getImg(date)
   img.src = path
-
-  img.onerror = () => {
-    img.style.display = "none"
-  }
-
-  img.onload = () => {
-    img.style.display = "block"
-  }
+  img.onerror = ()=> img.style.display="none"
+  img.onload = ()=> img.style.display="block"
 }
 
 function renderCal(){
-
   const [y,m] = monthInput.value.split("-").map(Number)
-
   const days = new Date(y,m,0).getDate()
   const first = new Date(y,m-1,1)
+  let start = (first.getDay()+6)%7
 
-  let start = first.getDay()
-  start = (start + 6) % 7
-
-  cal.innerHTML = ""
+  cal.innerHTML=""
 
   for(let i=0;i<start;i++){
-    const empty = document.createElement("div")
-    cal.appendChild(empty)
+    cal.appendChild(document.createElement("div"))
   }
 
   for(let d=1; d<=days; d++){
-
     const dd = String(d).padStart(2,"0")
     const mm = String(m).padStart(2,"0")
     const date = `${y}-${mm}-${dd}`
 
     const el = document.createElement("div")
-    el.className = "day"
-    el.innerText = d
+    el.className="day"
+    el.innerText=d
 
-    el.onclick = () => {
-      dateInput.value = date
+    el.onclick=()=>{
+      dateInput.value=date
       renderImg(date)
+      cargar(date)
 
       document.querySelectorAll(".day").forEach(x=>x.classList.remove("sel"))
       el.classList.add("sel")
@@ -114,6 +140,36 @@ function renderCal(){
   }
 }
 
+function guardar(){
+  const data = {
+    resultado: resultado.value,
+    direccion: direccion.value,
+    entrada: entrada.value,
+    ratio: ratio.value,
+    puntos: puntos.value,
+    sesion: sesion.value,
+    gestion: gestion.value,
+    feeling: feeling.value,
+    manto: manto.value
+  }
+
+  localStorage.setItem(dateInput.value, JSON.stringify(data))
+  alert("Guardado")
+}
+
+function cargar(date){
+  const data = JSON.parse(localStorage.getItem(date) || "{}")
+
+  resultado.value = data.resultado || ""
+  direccion.value = data.direccion || ""
+  entrada.value = data.entrada || ""
+  puntos.value = data.puntos || ""
+  sesion.value = data.sesion || "New York"
+  gestion.value = data.gestion || ""
+  feeling.value = data.feeling || ""
+  manto.value = data.manto || ""
+}
+
 // INIT
 const today = new Date()
 monthInput.value = today.toISOString().slice(0,7)
@@ -121,6 +177,7 @@ dateInput.value = today.toISOString().slice(0,10)
 
 renderCal()
 renderImg(dateInput.value)
+cargar(dateInput.value)
 
 monthInput.onchange = renderCal
 
