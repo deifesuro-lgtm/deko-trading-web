@@ -1,0 +1,52 @@
+body{
+background:#070b16;
+color:white;
+font-family:Arial,sans-serif;
+margin:0;
+}
+.container{
+display:flex;
+}
+.sidebar{
+width:240px;
+background:#0b1220;
+padding:20px;
+height:100vh;
+}
+.sidebar h1{
+color:#43ff75;
+}
+.sidebar ul{
+list-style:none;
+padding:0;
+}
+.sidebar li{
+margin:20px 0;
+}
+.content{
+flex:1;
+padding:20px;
+}
+.top{
+display:flex;
+gap:20px;
+}
+.card{
+background:#111827;
+padding:20px;
+border-radius:12px;
+flex:1;
+border:1px solid #1f2937;
+}
+.calendar,.chart{
+margin-top:20px;
+background:#111827;
+padding:20px;
+border-radius:12px;
+}
+.graph{
+height:220px;
+background:linear-gradient(to top,#22c55e,#0f172a);
+border-radius:10px;
+margin-top:10px;
+}
