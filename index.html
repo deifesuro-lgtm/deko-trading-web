@@ -21,6 +21,7 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
 .form h2{margin:0 0 13px}.field{margin-bottom:10px}.field label{display:block;color:#e5e7eb;font-weight:700;font-size:12px;margin-bottom:5px}.field-help{color:var(--muted);font-size:10px;margin-top:4px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}select,input,textarea{width:100%;background:#111827;border:1px solid var(--line);color:#fff;border-radius:8px;padding:10px;font-size:13px}textarea{min-height:85px;resize:vertical}.bitacora{min-height:125px}.switch{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:9px;overflow:hidden}.switch button{border:0;padding:9px;background:#111827;color:#fff;cursor:pointer;font-weight:800}.switch button.active{background:linear-gradient(90deg,#16a34a,#22c55e);color:#031008}.situation-card{margin-top:13px;border:1px solid #26354a;border-radius:13px;padding:12px;background:linear-gradient(180deg,#0d1624,#09101a)}.situation-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.situation-head h3{margin:0;font-size:15px}.num-badge{width:25px;height:25px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:rgba(34,197,94,.18);color:var(--green2);border:1px solid rgba(34,197,94,.3);margin-right:7px}.remove-situation{border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.10);color:#ff9696;border-radius:8px;padding:6px 8px;cursor:pointer}.upload-box{border:1px dashed #40506a;border-radius:10px;padding:10px;text-align:center;background:#09101a;position:relative}.upload-box input{position:absolute;inset:0;opacity:0;cursor:pointer}.upload-preview{width:100%;max-height:190px;object-fit:contain;border-radius:8px;margin-top:8px;display:none}.add-situation,.save{width:100%;border-radius:9px;padding:12px;font-weight:900;cursor:pointer}.add-situation{margin-top:11px;border:1px solid var(--line);background:#111827;color:#fff}.save{background:linear-gradient(90deg,#22c55e,#43e46d);color:#031008;border:0;font-size:14px;margin-top:10px}.legacy-banner{display:none;background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.28);color:#fde68a;border-radius:10px;padding:9px;margin-bottom:10px;font-size:11px}
 .emotion-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.emotion-tag{border:1px solid var(--line);background:#0e1724;color:#cbd5e1;border-radius:999px;padding:6px 9px;font-size:11px}.emotion-check{margin-top:16px;padding:15px}.emotion-check h3{margin:0 0 10px}.emotion-list{display:grid;gap:7px}.emotion-item{display:flex;gap:8px;align-items:flex-start;color:#dbe4ee;font-size:12px}.emotion-dot{width:7px;height:7px;border-radius:50%;background:var(--green2);margin-top:5px;flex:0 0 auto}.emotion-dot.warn{background:var(--orange)}.emotion-dot.bad{background:var(--red)}
 .table{width:100%;border-collapse:collapse}.table td,.table th{border-bottom:1px solid var(--line);padding:11px;text-align:left;vertical-align:top}.table th{color:#cbd5e1;font-size:12px}.section-title{margin:0 0 12px}.analysis-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.analysis-card{padding:15px}.analysis-card h3{margin:0 0 8px;font-size:14px}.analysis-card strong{font-size:25px}.admin-only{}body.view-mode .admin-only,body.view-mode #rightForm{display:none!important}body.view-mode .grid{grid-template-columns:1fr!important}body.view-mode .view-banner{display:block}
+.day-actions{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:10px}.delete-day{border:1px solid rgba(239,68,68,.45);background:rgba(239,68,68,.12);color:#ffaaaa;border-radius:10px;padding:12px 16px;font-weight:800;cursor:pointer}.delete-day:hover{background:rgba(239,68,68,.20)}.delete-day:disabled{opacity:.55;cursor:not-allowed}@media(max-width:640px){.day-actions{grid-template-columns:1fr}.delete-day{width:100%}}
 /* V5: evita que canvas retina agrande el ancho real en iPhone/Safari */
 html,body{width:100%;max-width:100%;overflow-x:hidden}
 .app,.main,.grid,.charts,.panel,.chart-box,.calendar-wrap{min-width:0}
@@ -197,7 +198,7 @@ img,video{max-width:100%;height:auto}
 
           <div id="situationsForm"></div>
           <button class="add-situation" id="addSituationBtn">＋ Agregar Situación 2</button>
-          <button class="save" id="saveBtn">Guardar registro del día</button>
+          <div class="day-actions"><button class="save" id="saveBtn">Guardar registro del día</button><button class="delete-day" id="deleteDayBtn">🗑 Eliminar día</button></div>
           <div class="field-help" style="margin-top:8px">Las imágenes se convierten a JPG, se comprimen y se guardan en Supabase. Al guardar, quedan visibles desde el mismo enlace público en cualquier dispositivo.</div>
         </aside>
       </div>
@@ -351,6 +352,35 @@ async function saveDay(){
   }catch(err){console.error(err);setSync('Supabase: error al guardar','bad');alert('No se pudo guardar: '+(err.message||err))}finally{btn.disabled=false;btn.textContent='Guardar registro del día'}
 }
 
+
+async function deleteDay(){
+  if(!isEditing()){alert('Inicia sesión como administrador para eliminar.');return}
+  const date=$('date').value;
+  const saved=remoteDays.find(d=>d.date===date);
+  if(!saved){alert('Ese día no tiene ningún registro guardado.');return}
+  const ok=confirm(`¿Eliminar por completo el registro del ${date}?\n\nSe borrarán el día, sus situaciones y sus imágenes. Esta acción no se puede deshacer.`);
+  if(!ok)return;
+  const btn=$('deleteDayBtn');
+  btn.disabled=true;btn.textContent='Eliminando…';setSync('Supabase: eliminando día…');
+  try{
+    const paths=[saved.dayImagePath,...(saved.situations||[]).map(s=>s.imagePath)].filter(Boolean);
+    const dr=await sb.from('trading_days').delete().eq('trade_date',date);
+    if(dr.error)throw dr.error;
+    if(paths.length){
+      const unique=[...new Set(paths)];
+      const ir=await sb.storage.from('trading-images').remove(unique);
+      if(ir.error)console.warn('El día se eliminó, pero alguna imagen no pudo limpiarse del storage:',ir.error);
+    }
+    draftImages={};draftDayImage=null;currentDay={...DEFAULT_DAY(),date};
+    await loadRemoteData();selectDate(date);
+    alert('Día eliminado. La fecha quedó limpia para volver a registrarla cuando quieras.');
+  }catch(err){
+    console.error(err);setSync('Supabase: error al eliminar','bad');alert('No se pudo eliminar el día: '+(err.message||err));
+  }finally{
+    btn.disabled=false;btn.textContent='🗑 Eliminar día';
+  }
+}
+
 function renderDetail(date){
   const d=readDay(date),s=(d.situations||[]).filter(situationHasData);$('detailTitle').textContent=`Detalle del día · ${date}`;const p=dayPoints(d);$('dayPill').textContent=!dayOperated(d)?'Sin operar':p>0?`Positivo ${fmt(p)} pts`:p<0?`Negativo ${fmt(p)} pts`:'Break even';$('dayEmotion').textContent=d.bitacora||d.notaGeneral||'Sin bitácora emocional para este día.';
   const dayImg=d.dayImagePath?`<img class="day-general-img" id="detailDayImg" alt="Evidencia general" src="${escapeHtml(publicImageUrl(d.dayImagePath))}" style="display:block">`:'';
@@ -383,7 +413,7 @@ async function doLogin(){const email=$('loginEmail').value.trim(),password=$('lo
 async function logout(){await sb.auth.signOut();authSession=null;applyMode();setSync(`Supabase: ${remoteDays.length} día(s) sincronizados`,'ok')}
 
 // Eventos
-$('adminBtn').onclick=openLogin;$('exitAdminBtn').onclick=logout;$('cancelLogin').onclick=closeLogin;$('doLogin').onclick=doLogin;$('loginModal').onclick=e=>{if(e.target===$('loginModal'))closeLogin()};$('loginPassword').onkeydown=e=>{if(e.key==='Enter')doLogin()};$('addSituationBtn').onclick=addSituation2;$('saveBtn').onclick=saveDay;$('exportBtn').onclick=exportBackup;
+$('adminBtn').onclick=openLogin;$('exitAdminBtn').onclick=logout;$('cancelLogin').onclick=closeLogin;$('doLogin').onclick=doLogin;$('loginModal').onclick=e=>{if(e.target===$('loginModal'))closeLogin()};$('loginPassword').onkeydown=e=>{if(e.key==='Enter')doLogin()};$('addSituationBtn').onclick=addSituation2;$('saveBtn').onclick=saveDay;$('deleteDayBtn').onclick=deleteDay;$('exportBtn').onclick=exportBackup;
 $('dayImageInput').onchange=()=>{const f=$('dayImageInput').files?.[0];if(!f)return;draftDayImage=f;const p=$('dayPreview');p.src=URL.createObjectURL(f);p.style.display='block'};
 $('month').onchange=renderCal;$('date').onchange=()=>selectDate($('date').value);document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));$(b.dataset.tab).classList.add('active')});document.querySelectorAll('.stage-filter button').forEach(b=>b.onclick=()=>{stageFilter=b.dataset.stage;document.querySelectorAll('.stage-filter button').forEach(x=>x.classList.toggle('active',x===b));renderCal();renderDetail($('date').value)});document.querySelectorAll('.chart-tabs button').forEach(b=>b.onclick=()=>{chartMetric=b.dataset.metric;document.querySelectorAll('.chart-tabs button').forEach(x=>x.classList.toggle('active',x===b));drawEvolution()});document.querySelectorAll('.range-tabs button').forEach(b=>b.onclick=()=>{chartRange=b.dataset.range;document.querySelectorAll('.range-tabs button').forEach(x=>x.classList.toggle('active',x===b));drawEvolution()});window.addEventListener('resize',()=>{drawEvolution();drawDonut(stats(monthData()))});
 sb.auth.onAuthStateChange((_event,session)=>{authSession=session;applyMode()});
